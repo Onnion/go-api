@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
-
+    "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -15,8 +15,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	r := mux.NewRouter()
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
+
+
+	r := mux.NewRouter()
 	r.HandleFunc("/", home).Methods("GET")
 	r.HandleFunc("/movies", home).Methods("GET")
 	r.HandleFunc("/movies", home).Methods("POST")
