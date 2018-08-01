@@ -2,24 +2,32 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
-    "github.com/gorilla/handlers"
+
 	"github.com/gorilla/mux"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "asdasd")
+	url := "https://jsonplaceholder.typicode.com/posts"
+	res, err := http.Get(url)
+	if err != nil {
+		fmt.Fprintf(w, "err %s", err)
+	} else {
+		body, _ := ioutil.ReadAll(res.Body)
+		text := string(body)
+		fmt.Fprintf(w, "%s", text)
+	}
+
 }
 
 func main() {
 
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
-	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
-
+	// headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	// originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
+	// methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", home).Methods("GET")
